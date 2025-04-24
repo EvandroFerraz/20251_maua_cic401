@@ -22,24 +22,31 @@ public class Grafo {
         adj[destino].add(origem);
     }
 
+    // Método que realiza a busca em profundidade, usando pilha
     public void dfs(int inicio) {
-        // - Crie um vetor booleano chamado "visitado" que indique se um vértice já foi explorado ou não.
-        // - Crie uma estrutura de pilha (Stack<Integer>) que será usada para controlar a ordem de visitação dos vértices.
-        // - Insira (empilhe) o vértice inicial na pilha. No exercício, o ponto de partida é o vértice 0.
+        boolean[] visitado = new boolean[V]; // Vetor para controlar quais vértices já foram visitados
+        Stack<Integer> pilha = new Stack<>();
 
-        // - Enquanto a pilha não estiver vazia (ou seja, ainda há vértices a explorar):
-        //     - Remova (desempilhe) o vértice do topo da pilha e armazene-o como "vértice atual".
-        //     - Verifique se esse vértice atual já foi visitado:
-        //         - Se ainda não foi:
-        //             - Marque o vértice atual como visitado no vetor "visitado".
-        //             - Imprima o valor do vértice atual — esse é o momento em que ele é visitado.
-        //             - Acesse a lista de vizinhos do vértice atual (na lista de adjacência).
-        //                 - Para cada vizinho:
-        //                     - Verifique se ele já foi visitado.
-        //                     - Se ainda não foi visitado:
-        //                         - Adicione (empilhe) esse vizinho na pilha para ser processado futuramente.
-        //                         - Isso garante que ele será visitado quando for o próximo topo da pilha.
+        pilha.push(inicio); // Empilha o vértice inicial
 
+        // Executa enquanto houver elementos na pilha
+        while (!pilha.isEmpty()) {
+            int atual = pilha.pop(); // Remove o topo da pilha e armazena na variável 'atual'
+
+            // Se o vértice ainda não foi visitado
+            if (!visitado[atual]) {
+                System.out.print(atual + " "); // Exibe o vértice no console
+                visitado[atual] = true; // Marca como visitado
+
+                // Percorre os vizinhos do vértice atual
+                for (int vizinho : adj[atual]) {
+                    // Se o vizinho ainda não foi visitado, adiciona à pilha
+                    if (!visitado[vizinho]) {
+                        pilha.push(vizinho);
+                    }
+                }
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -63,106 +70,69 @@ public class Grafo {
     }
 }
 
+// Teste de Mesa para o DFS:
+
 // Exemplo de execução para a entrada:
 // java Grafo 6 0 1 0 2 1 3 2 4 4 5
 
-// Vamos simular o algoritmo DFS iniciando pelo vértice 0
+// Lista de adjacência gerada:
+// 0: [1, 2]
+// 1: [0, 3]
+// 2: [0, 4]
+// 3: [1]
+// 4: [2, 5]
+// 5: [4]
 
-// ----------------------------
-// Etapa 0: Inicialização
-// ----------------------------
+// Simulação do DFS a partir do vértice 0:
+
+// Etapa 0
 // Pilha:         [0]
 // visitado:      [false, false, false, false, false, false]
 // Saída parcial: ---
 
-// Explicação:
-// - Iniciamos a DFS empilhando o vértice inicial (0).
-// - Nenhum vértice foi visitado ainda.
-
-// ----------------------------
-// Etapa 1: Visitando o vértice 0
-// ----------------------------
-// Vértice atual: 0 (desempilhado)
+// Etapa 1
+// Vértice atual: 0
 // Pilha:         []
 // visitado:      [true, false, false, false, false, false]
 // Saída parcial: 0
 // Vizinho empilhado: 1, 2
 // Pilha:         [1, 2]
 
-// Explicação:
-// - Visitamos o vértice 0 e marcamos como visitado.
-// - Seus vizinhos são 1 e 2, que ainda não foram visitados, então empilhamos ambos.
-
-// ----------------------------
-// Etapa 2: Visitando o vértice 2 (topo da pilha)
-// ----------------------------
+// Etapa 2
 // Vértice atual: 2
 // Pilha:         [1]
 // visitado:      [true, false, true, false, false, false]
 // Saída parcial: 0 2
-// Vizinho empilhado: 4
+// Vizinho empilhado: 4 (0 já visitado)
 // Pilha:         [1, 4]
 
-// Explicação:
-// - 2 é desempilhado, visitado e marcado.
-// - Seus vizinhos são 0 (já visitado) e 4 (não visitado).
-// - Apenas o 4 é empilhado.
-
-// ----------------------------
-// Etapa 3: Visitando o vértice 4
-// ----------------------------
+// Etapa 3
 // Vértice atual: 4
 // Pilha:         [1]
 // visitado:      [true, false, true, false, true, false]
 // Saída parcial: 0 2 4
-// Vizinho empilhado: 5
+// Vizinho empilhado: 5 (2 já visitado)
 // Pilha:         [1, 5]
 
-// Explicação:
-// - 4 é visitado e marcado.
-// - Vizinho 2 já foi visitado, então empilhamos apenas o 5 (não visitado).
-
-// ----------------------------
-// Etapa 4: Visitando o vértice 5
-// ----------------------------
+// Etapa 4
 // Vértice atual: 5
 // Pilha:         [1]
 // visitado:      [true, false, true, false, true, true]
 // Saída parcial: 0 2 4 5
-// Vizinho: 4 (já visitado)
-// Pilha:         [1]
+// Vizinho: 4 (já visitado), nada novo na pilha
 
-// Explicação:
-// - 5 é visitado e marcado.
-// - Seu único vizinho (4) já foi visitado, então nada novo é empilhado.
-
-// ----------------------------
-// Etapa 5: Visitando o vértice 1
-// ----------------------------
+// Etapa 5
 // Vértice atual: 1
 // Pilha:         []
 // visitado:      [true, true, true, false, true, true]
 // Saída parcial: 0 2 4 5 1
-// Vizinho empilhado: 3
+// Vizinho empilhado: 3 (0 já visitado)
 // Pilha:         [3]
 
-// Explicação:
-// - 1 é visitado e marcado.
-// - Vizinho 0 já visitado, mas o 3 ainda não — então empilhamos o 3.
-
-// ----------------------------
-// Etapa 6: Visitando o vértice 3
-// ----------------------------
+// Etapa 6
 // Vértice atual: 3
 // Pilha:         []
 // visitado:      [true, true, true, true, true, true]
 // Saída parcial: 0 2 4 5 1 3
 
-// Explicação:
-// - 3 é visitado e marcado.
-// - Seu único vizinho (1) já foi visitado, então a pilha esvazia.
-
-// ----------------------------
-// Fim da execução
-// ----------------------------
-// Todos os vértices alcançáveis a partir do vértice 0 foram visitados.
+// Fim da execução — todos os vértices conectados ao 0 foram visitados.
